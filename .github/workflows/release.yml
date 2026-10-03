@@ -1,0 +1,38 @@
+name: Release
+
+# 打 tag 就发版：v1.0.0 这样的 tag 一推上来，自动构建 .skill 并建 Release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build skills
+        run: python3 build.py
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/interview-prep.skill
+            dist/interview-prep-zh.skill
+            interviewer/index.html
+          generate_release_notes: true
+          body: |
+            ## 下载哪个
+
+            - **interview-prep.skill** / **interview-prep-zh.skill** — Claude Code、Claude Desktop、Claude.ai。只装一个语言版本。
+            - **index.html** — Mock Interviewer。下载后用 Chrome 打开，没有安装步骤。
+            安装和用法见 README。
