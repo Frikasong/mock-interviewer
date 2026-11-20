@@ -85,6 +85,8 @@ in Chrome. That is the entire installation procedure — no Node, no server, no 
 account. See [its README](interviewer/README.md) for the question format and
 browser support.
 
+An illustrated interviewer reads each question and listens while you answer. On its own it is just a drawing: nothing leaves your computer. If you want it to think, open **AI interviewer (optional)** on the setup page and connect any service with an OpenAI-style API — OpenAI, Claude, Gemini, DeepSeek, Kimi, Qwen, Doubao, OpenRouter, a local model through Ollama, or your own address. It will then ask one follow-up after each answer, the way a real panel does, and can mark the debrief for you. Your key stays in that tab unless you tick "remember"; while connected, the page says exactly who your answers are going to, and video and audio are never sent.
+
 ---
 
 ## How they fit together
@@ -137,9 +139,9 @@ A few decisions worth stating, since they're the ones people usually ask about:
 
 **The skill never writes your experience for you.** It interrogates, structures, and sharpens; the facts have to come from you. A fabricated story survives exactly one follow-up question, and the failure mode is worse than having no story.
 
-**The interviewer contains no AI.** No key, no cost, no recording of yours passing through anyone's inference. The debrief is a markdown file designed to be pasted into whatever assistant you already use, with the coaching prompt written at the top.
+**AI in the interviewer is opt-in and yours.** Out of the box it calls nothing: no key, no cost, no recording passing through anyone's inference, and the debrief is a markdown file you can take to whatever assistant you use. Connect one and it adds live follow-ups and marking, using your own key with the provider you chose — never a server of ours, because there isn't one.
 
-**Nothing is uploaded, ever.** Video, audio and transcript live in the browser tab and are discarded when you close it unless you download them first. For a file full of your own unrehearsed interview answers, that is the correct default.
+**Recordings are never uploaded.** Video and audio live in the browser tab and are discarded when you close it unless you download them first. For a file full of your own unrehearsed interview answers, that is the correct default.
 
 ## Licence
 

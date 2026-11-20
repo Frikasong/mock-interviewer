@@ -225,7 +225,7 @@ def check_question_bank(markdown: str) -> str:
     return "\n".join(out)
 
 
-_DEB_Q = re.compile(r"^###\s*Q(\d+)\s*[—-]\s*(.*)$", re.M)
+_DEB_Q = re.compile(r"^###\s*Q(\d+[a-z]?)\s*[—-]\s*(.*)$", re.M)
 
 
 def _secs(t: str) -> int | None:
@@ -251,7 +251,9 @@ def read_debrief(markdown: str) -> str:
     rows, flags, total = [], [], 0
     for i, h in enumerate(heads):
         body = md[h.end(): heads[i + 1].start() if i + 1 < len(heads) else len(md)]
-        n, text = int(h.group(1)), h.group(2).strip()
+        n, text = h.group(1), h.group(2).strip()
+        n = n if not n.isdigit() else f"{int(n):02d}"
+        n = re.sub(r"^(\d)([a-z])$", r"0\1\2", n)
         tb = re.search(r"^-\s*(?:time / budget|用时/预算):\s*([-\d:]+)\s*/\s*([-\d:]+)", body, re.M)
         used, bud = (_secs(tb.group(1)), _secs(tb.group(2))) if tb else (None, None)
         marks_line = re.search(r"^-\s*(?:self-marks|自评):\s*(.*)$", body, re.M)
@@ -273,10 +275,10 @@ def read_debrief(markdown: str) -> str:
         if marks[2:3] == ["N"] and prepared: reasons.append("prepared story not used")
         if not prepared: reasons.append("nothing prepared")
         if empty and not skipped: reasons.append("no transcript to check")
-        rows.append(f'Q{n:02d} · {_mmss(used) if used is not None else "?"} / {_mmss(bud) if bud is not None else "?"}'
+        rows.append(f'Q{n} · {_mmss(used) if used is not None else "?"} / {_mmss(bud) if bud is not None else "?"}'
                     f' · marks {"".join(marks) or "—"} · {words} words{" · SKIPPED" if skipped else ""} — {text[:80]}')
         if reasons:
-            flags.append((len(reasons) + (2 if skipped or over else 0), f"Q{n:02d}: " + "; ".join(reasons)))
+            flags.append((len(reasons) + (2 if skipped or over else 0), f"Q{n}: " + "; ".join(reasons)))
     flags.sort(key=lambda x: -x[0])
     out = [f"{len(rows)} questions answered, {_mmss(total)} in total.", ""] + rows + [""]
     out += (["Re-run first (by measurable signals only; read the transcripts for the rest):"]

@@ -140,6 +140,58 @@ video.cam{transform:scaleX(-1)}
 .dl{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 .vid{margin-top:12px;display:flex;gap:10px;align-items:center;font-size:15px;color:var(--muted)}
 
+/* ---- interviewer figure ---- */
+.ivrow{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.iv{flex:none;width:96px;height:96px;border-radius:50%;overflow:hidden;background:var(--soft)}
+.iv svg{width:100%;height:100%;display:block}
+.iv-bg{fill:var(--soft)}
+.iv-coat{fill:light-dark(#1b2470,#2a3590)}
+.iv-lapel{fill:light-dark(#141b57,#222c7a)}
+.iv-shirt{fill:#fff}
+.iv-tie{fill:var(--blue)}
+.iv-skin{fill:#e8c3a3}
+.iv-skin-shade{fill:#d7aa86}
+.iv-hair{fill:#2a2420}
+.iv-ink{fill:#1a1614}
+.iv-glasses{stroke:#1a1614;stroke-width:2}
+.iv-brow{stroke:#2a2420;stroke-width:2.4;stroke-linecap:round}
+.iv-nose{stroke:#c08f6c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.iv-lips{stroke:#8c4b3c;stroke-width:2;stroke-linecap:round}
+.iv-open{fill:#8c4b3c;opacity:0}
+.iv-head,.iv-eyes,.iv-mouth{transform-box:fill-box;transform-origin:center}
+.iv-eyes{animation:blink 5s infinite}
+@keyframes blink{0%,96%,100%{transform:scaleY(1)}98%{transform:scaleY(.1)}}
+.iv[data-state=asking] .iv-open{animation:talk .32s infinite alternate}
+.iv[data-state=asking] .iv-lips{opacity:0}
+@keyframes talk{from{opacity:1;transform:scaleY(.35)}to{opacity:1;transform:scaleY(1)}}
+.iv[data-state=listening] .iv-head{animation:nod 3.2s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(-3deg) translateY(1px)}}
+.iv[data-state=thinking] .iv-eyes{transform:translate(2px,-2px);animation:none}
+.iv[data-state=thinking] .iv-brow{transform:translateY(-1.5px)}
+.ivtext{display:flex;flex-direction:column;line-height:1.35}
+.ivtext b{font-weight:600}
+.ivtext span{color:var(--muted);font-size:15px}
+.ivtext em{font-style:normal;font-size:13px;color:var(--blue);font-weight:600}
+@media (prefers-reduced-motion:reduce){.iv *{animation:none!important}}
+/* ---- follow-up and coach ---- */
+.fu{margin-top:30px;border-top:3px solid var(--blue);padding-top:12px}
+.fu-q{font-family:var(--serif);font-weight:700;font-size:clamp(22px,2.4vw,28px);line-height:1.25;margin:8px 0 0;text-wrap:balance}
+.fu-wait{display:flex;gap:6px;margin:14px 0 0}
+.fu-wait i{width:9px;height:9px;border-radius:50%;background:var(--blue);animation:pulse 1.2s infinite}
+.fu-wait i:nth-child(2){animation-delay:.2s}.fu-wait i:nth-child(3){animation-delay:.4s}
+.aibox summary{cursor:pointer;min-height:44px;display:flex;align-items:center;list-style-position:inside}
+.aigrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16em,1fr));gap:14px 24px;margin-top:10px}
+.aigrid[hidden]{display:none}
+.aigrid .wide{grid-column:1/-1}
+.aigrid .lbl{display:block;margin-bottom:8px}
+.aistat{font-size:15px;margin-left:10px}
+.aistat.ok{color:var(--blue);font-weight:600}
+.aistat.bad{color:var(--alarm)}
+.coach{margin-top:30px;border-top:3px solid var(--ink);padding-top:12px;max-width:900px}
+.coachtext{margin-top:10px;font-size:16px}
+.coachtext h3{font-family:var(--serif);font-size:22px;margin:22px 0 6px}
+.coachtext p,.coachtext li{max-width:70ch}
+
 @media (max-width:980px){
   .stage{grid-template-columns:minmax(0,1fr) 260px}
   .rail{grid-column:1/-1;display:flex;gap:0 20px;overflow-x:auto;border-top:3px solid var(--ink)}
@@ -198,7 +250,22 @@ en:{
  exportMd:"Download debrief (.md)", exportAll:"Download recordings", again:"New session",
  total:"Total answering time", over:"over",
  vidFor:"Recording",
- coachTitle:"Prompt for your AI coach"
+ coachTitle:"Prompt for your AI coach",
+ aiTitle:"AI interviewer (optional)",
+ aiOn:"Connect an AI to ask follow-ups and mark the debrief",
+ aiProv:"Provider", aiBase:"API address", aiModel:"Model", aiKey:"API key", aiKeyPh:"Paste your key", aiNoKey:"Not needed for a local model",
+ aiFu:"Ask one follow-up after each answer", aiCoach:"Offer to mark the debrief",
+ aiRemember:"Remember on this computer (the key is saved in this browser)",
+ aiTest:"Test connection", aiTesting:"Testing…", aiOk:"Connected. {m} replied.",
+ aiSends:"While connected, each question, your transcript and the material you prepared are sent to {p}. Video and audio never are. Without a connection nothing leaves this machine.",
+ aiOllama:"For Ollama, start it with OLLAMA_ORIGINS=* so a page opened from a file can reach it.",
+ aiModelPh:"e.g. {m}",
+ privAi:"Runs locally · answers go to {p} for follow-ups",
+ ivName:"Interviewer", ivAsking:"Asking", ivListening:"Listening", ivThinking:"Thinking of a follow-up", ivReady:"Ready when you are", ivDone:"Next question when you are ready", ivFollowed:"Asked you a follow-up",
+ fuTitle:"Follow-up from the interviewer", fuAnswer:"Answer the follow-up", fuSkip:"Skip it", fuFail:"No follow-up: {e}", fuTag:"follow-up",
+ coachAsk:"Ask {p} to mark this", coachWait:"{p} is marking your answers…", coachHead:"Marking from {p}", coachFail:"Could not get the marking: {e}",
+ errNet:"couldn't reach {b}. The address may be wrong, or the provider doesn't accept requests from a web page. OpenRouter or a local model (Ollama) do.",
+ errAuth:"the key was refused ({s}).", errModel:"the model or address wasn't found ({s}). Check the model name.", errHttp:"the provider returned {s}.", errTime:"no reply after 60 seconds.", errEmpty:"the reply was empty.", errSetup:"fill in the address and model first."
 },
 zh:{
  priv:"本地运行 · 数据不离开这台机器",
@@ -231,7 +298,22 @@ zh:{
  exportMd:"下载复盘（.md）", exportAll:"下载录像", again:"新开一场",
  total:"总作答时间", over:"超时",
  vidFor:"录像",
- coachTitle:"给 AI 教练的 prompt"
+ coachTitle:"给 AI 教练的 prompt",
+ aiTitle:"AI 面试官（可选）",
+ aiOn:"接入一个 AI，让它现场追问、帮你批改复盘",
+ aiProv:"服务商", aiBase:"接口地址", aiModel:"模型", aiKey:"API key", aiKeyPh:"粘贴你的 key", aiNoKey:"本机模型不需要",
+ aiFu:"每答完一题追问一句", aiCoach:"结束后提供一键批改",
+ aiRemember:"在这台电脑上记住（key 会保存在这个浏览器里）",
+ aiTest:"测试连接", aiTesting:"测试中……", aiOk:"连上了，{m} 有回应。",
+ aiSends:"接入后，每道题、你的转录和你准备的材料会发送给 {p}；录像和音频永远不发送。不接入时，什么都不离开这台电脑。",
+ aiOllama:"用 Ollama 的话，启动时加上 OLLAMA_ORIGINS=*，从文件打开的网页才能连上它。",
+ aiModelPh:"例如 {m}",
+ privAi:"本地运行 · 回答会发给 {p} 用于追问",
+ ivName:"面试官", ivAsking:"提问中", ivListening:"在听", ivThinking:"在想追问", ivReady:"准备好就开始", ivDone:"准备好就下一题", ivFollowed:"追问了你一句",
+ fuTitle:"面试官追问", fuAnswer:"回答追问", fuSkip:"跳过", fuFail:"这次没有追问：{e}", fuTag:"追问",
+ coachAsk:"让 {p} 批改", coachWait:"{p} 正在批改……", coachHead:"{p} 的批改", coachFail:"没拿到批改：{e}",
+ errNet:"连不上 {b}。可能是地址填错了，也可能是这家服务商不接受网页直接发来的请求；OpenRouter 和本机模型（Ollama）可以。",
+ errAuth:"key 被拒绝了（{s}）。", errModel:"找不到这个模型或地址（{s}），检查一下模型名。", errHttp:"服务商返回了 {s}。", errTime:"60 秒没有回应。", errEmpty:"回复是空的。", errSetup:"先填好接口地址和模型。"
 }};
 let LANG = (navigator.language||"en").toLowerCase().startsWith("zh") ? "zh" : "en";
 const t = k => T[LANG][k] ?? k;
@@ -428,11 +510,14 @@ const S={
   phase:"setup", // setup | reading | answering | marking | debrief
   t0:0,elapsed:0,tick:null,cueOn:false,
   stream:null,rec:null,chunks:[],clips:{},recog:null,interim:"",
-  camReady:false
+  camReady:false,
+  ai:{on:false,preset:"openrouter",base:"",model:"",key:"",remember:false,followups:true,coach:true},
+  aiStatus:"", fu:null, coach:null, iv:"idle"
 };
 const $=s=>document.querySelector(s);
 const app=$("#app");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const qid=n=>String(n).replace(/^\d+/,d=>d.padStart(2,"0"));
 const mmss=s=>{const m=Math.floor(Math.abs(s)/60),x=Math.floor(Math.abs(s)%60);return (s<0?"-":"")+m+":"+String(x).padStart(2,"0")};
 
 function save(){
@@ -488,10 +573,32 @@ function renderSetup(){
      </div>
    </div>
 
+   <details class="field aibox" ${S.ai.on?"open":""}>
+     <summary class="lbl">${esc(t("aiTitle"))}</summary>
+     <label class="tg"><input type="checkbox" id="ai-on" ${S.ai.on?"checked":""}> ${esc(t("aiOn"))}</label>
+     <div class="aigrid" ${S.ai.on?"":"hidden"}>
+       <div><span class="lbl">${esc(t("aiProv"))}</span>
+         <select id="ai-preset">${Object.entries(PRESETS).map(([k,v])=>`<option value="${k}" ${S.ai.preset===k?"selected":""}>${esc(v.name)}</option>`).join("")}</select></div>
+       <div><span class="lbl">${esc(t("aiModel"))}</span>
+         <input id="ai-model" value="${esc(S.ai.model)}" placeholder="${esc(t("aiModelPh").replace("{m}",PRESETS[S.ai.preset].model))}" autocomplete="off" spellcheck="false"></div>
+       <div class="wide"><span class="lbl">${esc(t("aiBase"))}</span>
+         <input id="ai-base" value="${esc(S.ai.base)}" placeholder="https://…/v1" autocomplete="off" spellcheck="false"></div>
+       <div class="wide"><span class="lbl">${esc(t("aiKey"))}</span>
+         <input id="ai-key" type="password" value="${esc(S.ai.key)}" placeholder="${esc(PRESETS[S.ai.preset].nokey?t("aiNoKey"):t("aiKeyPh"))}" autocomplete="off"></div>
+       <div class="wide toggles">
+         <label class="tg"><input type="checkbox" id="ai-fu" ${S.ai.followups?"checked":""}> ${esc(t("aiFu"))}</label>
+         <label class="tg"><input type="checkbox" id="ai-coach" ${S.ai.coach?"checked":""}> ${esc(t("aiCoach"))}</label>
+         <label class="tg"><input type="checkbox" id="ai-rem" ${S.ai.remember?"checked":""}> ${esc(t("aiRemember"))}</label>
+       </div>
+       <div class="wide"><button class="btn" id="ai-test" type="button">${esc(t("aiTest"))}</button> <span class="aistat" id="ai-stat">${esc(S.aiStatus)}</span></div>
+       <p class="hint wide"><span id="ai-sends">${esc(t("aiSends").replace("{p}",aiName()))}</span>${S.ai.preset==="ollama"?" "+esc(t("aiOllama")):""}</p>
+     </div>
+   </details>
+
    <button class="btn primary" id="go">${esc(t("begin"))}</button>
    <div class="err" id="err"></div>
 
-   <div class="notice">${esc(t("privacy"))}<br>${esc(t("chrome"))}</div>`;
+   <div class="notice"><span id="priv-note">${esc(aiReady()?t("aiSends").replace("{p}",aiName()):t("privacy"))}</span><br>${esc(t("chrome"))}</div>`;
 
   const sync=()=>{S.org=$("#f-org").value;S.role=$("#f-role").value;S.bankMd=$("#f-bank").value;S.prep=$("#f-prep").value;
     const n=parseBank(S.bankMd).length; $("#qcount").textContent = n? "  · "+n+(LANG==="zh"?" 题":" questions") : ""; save();};
@@ -507,6 +614,21 @@ function renderSetup(){
     const r=new FileReader(); r.onload=()=>{S.bankMd=r.result;renderSetup();}; r.readAsText(f);
   });
   ["cam","mic","speak"].forEach(k=>$("#o-"+k).addEventListener("change",e=>S.opts[k]=e.target.checked));
+  const aiSync=()=>{
+    $("#mh-priv").textContent=privLine(); aiSave();
+    const s=$("#ai-sends"); if(s) s.textContent=t("aiSends").replace("{p}",aiName());
+    const n=$("#priv-note"); if(n) n.textContent=aiReady()?t("aiSends").replace("{p}",aiName()):t("privacy");
+  };
+  $("#ai-on").addEventListener("change",e=>{S.ai.on=e.target.checked; S.aiStatus=""; aiSave(); renderSetup(); $("#mh-priv").textContent=privLine();});
+  $("#ai-preset").addEventListener("change",e=>{S.ai.preset=e.target.value; const p=PRESETS[S.ai.preset]; S.ai.base=p.base; S.ai.model=""; S.aiStatus=""; aiSave(); renderSetup(); $("#mh-priv").textContent=privLine();});
+  [["ai-model","model"],["ai-base","base"],["ai-key","key"]].forEach(([id,k])=>$("#"+id).addEventListener("input",e=>{S.ai[k]=e.target.value; aiSync();}));
+  [["ai-fu","followups"],["ai-coach","coach"],["ai-rem","remember"]].forEach(([id,k])=>$("#"+id).addEventListener("change",e=>{S.ai[k]=e.target.checked; aiSync();}));
+  $("#ai-test").addEventListener("click",async()=>{
+    const st=$("#ai-stat"); st.textContent=t("aiTesting"); st.className="aistat";
+    try{ await aiChat([{role:"user",content:"Reply with the single word: ready"}],8); S.aiStatus=t("aiOk").replace("{m}",S.ai.model||aiName()); st.className="aistat ok"; }
+    catch(e){ S.aiStatus=e.message; st.className="aistat bad"; }
+    st.textContent=S.aiStatus;
+  });
   $("#go").addEventListener("click",start);
   sync();
 }
@@ -567,9 +689,150 @@ function speak(text){
     const u=new SpeechSynthesisUtterance(text);
     u.lang=/[\u4e00-\u9fa5]/.test(text)?"zh-CN":"en-US";
     u.rate=.98;
+    u.onstart=()=>setIv("asking");
+    u.onend=()=>setIv(S.phase==="answering"?"listening":S.phase==="marking"?"done":"idle");
     speechSynthesis.speak(u);
   }catch(e){}
 }
+
+
+/* ===================== optional AI interviewer ===================== */
+// Any service with an OpenAI-style /chat/completions endpoint. Nothing here runs
+// unless the user connects one; without it the tool makes no network requests.
+const PRESETS={
+  openai:{name:"OpenAI",base:"https://api.openai.com/v1",model:"gpt-4.1-mini"},
+  anthropic:{name:"Claude (Anthropic)",base:"https://api.anthropic.com/v1",model:"claude-sonnet-4-5"},
+  gemini:{name:"Gemini (Google)",base:"https://generativelanguage.googleapis.com/v1beta/openai",model:"gemini-2.5-flash"},
+  deepseek:{name:"DeepSeek",base:"https://api.deepseek.com/v1",model:"deepseek-chat"},
+  kimi:{name:"Kimi (Moonshot)",base:"https://api.moonshot.cn/v1",model:"kimi-k2-turbo-preview"},
+  qwen:{name:"通义千问 Qwen",base:"https://dashscope.aliyuncs.com/compatible-mode/v1",model:"qwen-plus"},
+  doubao:{name:"豆包 Doubao (Volcengine)",base:"https://ark.cn-beijing.volces.com/api/v3",model:"your endpoint id"},
+  openrouter:{name:"OpenRouter",base:"https://openrouter.ai/api/v1",model:"openai/gpt-4.1-mini"},
+  ollama:{name:"Ollama (this computer)",base:"http://localhost:11434/v1",model:"qwen2.5:7b",nokey:true},
+  custom:{name:"Other (OpenAI-compatible)",base:"",model:"model-name"}
+};
+const aiName=()=>S.ai.preset==="custom"? (S.ai.base.replace(/^https?:\/\//,"").split("/")[0]||"AI") : PRESETS[S.ai.preset].name;
+const aiReady=()=>S.ai.on && S.ai.base.trim() && S.ai.model.trim() && (S.ai.key.trim()||PRESETS[S.ai.preset]?.nokey||S.ai.preset==="custom");
+function aiSave(){
+  try{
+    if(S.ai.remember) localStorage.setItem("mis.ai",JSON.stringify(S.ai));
+    else localStorage.setItem("mis.ai",JSON.stringify({...S.ai,key:"",remember:false}));
+  }catch(e){}
+  try{ sessionStorage.setItem("mis.aikey",S.ai.key); }catch(e){}
+}
+function aiLoad(){
+  try{ const d=JSON.parse(localStorage.getItem("mis.ai")||"null"); if(d) Object.assign(S.ai,d); }catch(e){}
+  try{ if(!S.ai.key) S.ai.key=sessionStorage.getItem("mis.aikey")||""; }catch(e){}
+  if(!PRESETS[S.ai.preset]) S.ai.preset="custom";
+  if(!S.ai.base && S.ai.preset!=="custom") S.ai.base=PRESETS[S.ai.preset].base;
+}
+async function aiChat(messages,maxTokens){
+  const base=S.ai.base.trim().replace(/\/+$/,""), model=S.ai.model.trim();
+  if(!base||!model) throw new Error(t("errSetup"));
+  const headers={"Content-Type":"application/json"};
+  if(S.ai.key.trim()) headers.Authorization="Bearer "+S.ai.key.trim();
+  if(/anthropic\.com/.test(base)) headers["anthropic-dangerous-direct-browser-access"]="true";
+  if(/openrouter\.ai/.test(base)){ headers["X-Title"]="Mock Interviewer"; }
+  const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),60000);
+  let r;
+  try{
+    r=await fetch(base+"/chat/completions",{method:"POST",headers,signal:ctl.signal,
+      body:JSON.stringify({model,messages,max_tokens:maxTokens||400,temperature:0.6})});
+  }catch(e){
+    clearTimeout(timer);
+    throw new Error(e.name==="AbortError"? t("errTime") : t("errNet").replace("{b}",base));
+  }
+  clearTimeout(timer);
+  if(!r.ok){
+    let detail=String(r.status);
+    try{ const j=await r.json(); const m=j.error?.message||j.message||j.error; if(m) detail+=" · "+String(typeof m==="string"?m:JSON.stringify(m)).slice(0,160); }catch(e){}
+    throw new Error((r.status===401||r.status===403? t("errAuth") : r.status===404? t("errModel") : t("errHttp")).replace("{s}",detail));
+  }
+  const j=await r.json();
+  const txt=(j.choices?.[0]?.message?.content||"").toString().trim();
+  if(!txt) throw new Error(t("errEmpty"));
+  return txt;
+}
+function setIv(state){
+  S.iv=state;
+  const w=$(".iv"); if(w) w.dataset.state=state;
+  const l=$("#iv-state"); if(l) l.textContent=ivLabel();
+}
+function ivLabel(){
+  if(S.phase==="marking"&&S.fu?.state==="ready"&&S.iv!=="asking") return t("ivFollowed");
+  return {asking:t("ivAsking"),listening:t("ivListening"),thinking:t("ivThinking"),done:t("ivDone")}[S.iv]||t("ivReady");
+}
+// A plain illustrated interviewer: drawn in the page, no network, no AI.
+const IV_SVG=`<svg viewBox="16 18 88 88" aria-hidden="true" focusable="false">
+  <defs><clipPath id="ivc"><circle cx="60" cy="60" r="58"/></clipPath></defs>
+  <g clip-path="url(#ivc)">
+    <rect width="120" height="120" class="iv-bg"/>
+    <path d="M14 124 C16 96 34 84 60 84 C86 84 104 96 106 124 Z" class="iv-coat"/>
+    <path d="M60 84 L49 86 L60 112 L71 86 Z" class="iv-shirt"/>
+    <path d="M60 92 L56 98 L60 113 L64 98 Z" class="iv-tie"/>
+    <path d="M30 124 C31 104 40 94 52 89 L60 112 Z" class="iv-lapel"/>
+    <rect x="52" y="68" width="16" height="18" rx="6" class="iv-skin-shade"/>
+    <g class="iv-head">
+      <ellipse cx="60" cy="52" rx="21" ry="24" class="iv-skin"/>
+      <path d="M60 28 C46 28 38 36 38 50 C38 52 39 55 40 56 C41 46 46 40 56 39 C64 38 74 40 80 47 C81 50 82 53 81 56 C83 52 83 48 82 44 C79 33 71 28 60 28 Z" class="iv-hair"/>
+      <path d="M40 56 C39 60 40 63 42 64 L41 54 Z M80 56 C81 60 80 63 78 64 L79 54 Z" class="iv-skin-shade"/>
+      <g class="iv-eyes"><circle cx="52" cy="54" r="2.2" class="iv-ink"/><circle cx="68" cy="54" r="2.2" class="iv-ink"/></g>
+      <g class="iv-glasses" fill="none"><rect x="44" y="48" width="15" height="12" rx="4"/><rect x="61" y="48" width="15" height="12" rx="4"/><path d="M59 53 L61 53"/></g>
+      <path d="M48 45 L56 44 M64 44 L72 45" class="iv-brow"/>
+      <path d="M60 58 L58 64 L61 64" fill="none" class="iv-nose"/>
+      <g class="iv-mouth"><path d="M54 69 Q60 72 66 69" class="iv-lips" fill="none"/><ellipse cx="60" cy="70" rx="4" ry="2.6" class="iv-open"/></g>
+    </g>
+  </g>
+</svg>`;
+async function askFollowUp(){
+  const q=S.qs[S.i], a=ans();
+  S.fu={state:"loading"}; setIv("thinking"); render();
+  const L=/[一-龥]/.test(q.text);
+  const prepared=[q.opener&&`Opener: ${q.opener}`,q.best&&`Best story: ${q.best}`,q.watch&&`Watch: ${q.watch}`].filter(Boolean).join("\n");
+  const sys=`You are the interviewer${S.org?` at ${S.org}`:""}${S.role?` for the ${S.role} role`:""}, in a practice interview. After the candidate answers, you ask exactly one follow-up, the one a real panel would ask: what they personally did, a number, who disagreed, what they would do differently, or the point they skipped. Under 35 words. No praise, no feedback, no preamble. Reply with the question only, in ${L?"Chinese":"the language of the question"}.`;
+  const user=`Question: ${q.text}\n\nWhat the candidate prepared for it:\n${prepared||"(nothing)"}\n\nMaterial they prepared overall (for context):\n${(S.prep||"(none)").slice(0,4000)}\n\nWhat they said (speech-to-text, may contain errors):\n${a.transcript.trim()||"(no transcript; ask a follow-up a panel would ask on this question anyway)"}`;
+  try{
+    let txt=await aiChat([{role:"system",content:sys},{role:"user",content:user}],160);
+    txt=txt.replace(/^["“'「]+|["”'」]+$/g,"").trim();
+    if(S.phase!=="marking"||S.qs[S.i]!==q) return;
+    S.fu={state:"ready",text:txt}; S.iv=S.opts.speak?"asking":"done"; render(); speak(txt);
+  }catch(e){
+    if(S.phase!=="marking"||S.qs[S.i]!==q) return;
+    S.fu={state:"error",msg:e.message}; setIv("done"); render();
+  }
+}
+function answerFollowUp(){
+  const q=S.qs[S.i], txt=S.fu?.text; if(!txt) return;
+  let n=q.n+"a"; while(S.qs.some(x=>x.n===n)) n=n.replace(/([a-z])$/,(c)=>String.fromCharCode(c.charCodeAt(0)+1));
+  S.qs.splice(S.i+1,0,{n,text:txt,type:t("fuTag"),isFollow:true,isCase:false,budget:60,reading:0,best:"",backup:"",opener:"",watch:"",fact:"",key:"",source:"AI follow-up"});
+  S.fu=null; S.i++; enterQuestion();
+}
+async function askCoach(){
+  S.coach={state:"loading"}; renderDebrief();
+  const md=buildMarkdown();
+  const L=LANG==="zh";
+  try{
+    const txt=await aiChat([{role:"system",content:`You are an exacting interview coach. Follow the coaching prompt at the top of the record exactly. Reply in ${L?"Chinese":"English"}, in markdown.`},{role:"user",content:md}],2000);
+    S.coach={state:"ready",text:txt,by:`${aiName()} · ${S.ai.model}`};
+  }catch(e){ S.coach={state:"error",msg:e.message}; }
+  if(S.phase==="debrief") renderDebrief();
+}
+function mdLite(s){
+  // Tiny, safe markdown: escape everything, then headings, bold, lists, paragraphs.
+  const out=[]; let list=null;
+  const inline=x=>esc(x).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>");
+  const close=()=>{ if(list){ out.push(`</${list}>`); list=null; } };
+  for(const line of String(s).split(/\r?\n/)){
+    let m;
+    if(!line.trim()){ close(); continue; }
+    if((m=line.match(/^#{1,4}\s+(.*)/))){ close(); out.push(`<h3>${inline(m[1])}</h3>`); continue; }
+    if((m=line.match(/^\s*[-*•]\s+(.*)/))){ if(list!=="ul"){ close(); out.push("<ul>"); list="ul"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    if((m=line.match(/^\s*\d+[.)、]\s*(.*)/))){ if(list!=="ol"){ close(); out.push("<ol>"); list="ol"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    close(); out.push(`<p>${inline(line)}</p>`);
+  }
+  close(); return out.join("");
+}
+function privLine(){ return aiReady()? t("privAi").replace("{p}",aiName()) : t("priv"); }
 
 /* ========================== session flow ========================== */
 function ans(){
@@ -580,16 +843,18 @@ function ans(){
 async function start(){
   S.qs=parseBank(S.bankMd);
   if(!S.qs.length){ $("#err").textContent=t("noq"); return; }
-  S.i=0; S.answers={}; S.clips={};
+  S.i=0; S.answers={}; S.clips={}; S.coach=null; S.fu=null;
+  window.scrollTo(0,0);
   await initMedia();
   enterQuestion();
 }
 function enterQuestion(){
   const q=S.qs[S.i];
-  S.elapsed=0; S.cueOn=false;
+  S.elapsed=0; S.cueOn=false; S.fu=null; S.iv=S.opts.speak?"asking":"idle";
   S.phase = q.isCase ? "reading" : "reading";
   render();
   speak(q.text);
+  if(!S.opts.speak||!window.speechSynthesis) S.iv="idle";
   if(q.isCase && q.reading) beginTimer(q.reading,true);
 }
 function beginTimer(){
@@ -605,14 +870,17 @@ function beginTimer(){
   },100);
 }
 function beginAnswer(){
-  S.phase="answering"; S.elapsed=0; S.cueOn=true;
+  S.phase="answering"; S.elapsed=0; S.cueOn=true; S.iv="listening";
+  try{speechSynthesis.cancel()}catch(e){}
   render(); beginTimer(); startClip(); startRecog();
 }
 function endAnswer(skipped){
   clearInterval(S.tick); stopClip(); stopRecog();
   try{speechSynthesis.cancel()}catch(e){}
   const a=ans(); a.elapsed=Math.round(S.elapsed); a.skipped=!!skipped;
-  S.phase="marking"; render(); save();
+  S.phase="marking"; S.iv="done"; S.fu=null; render(); save();
+  const q=S.qs[S.i];
+  if(!skipped && aiReady() && S.ai.followups && !q.isFollow && !q.isCase) askFollowUp();
 }
 function nextQuestion(){
   if(S.i>=S.qs.length-1){ finish(); return; }
@@ -642,7 +910,7 @@ function render(){
   if(S.phase==="debrief") return renderDebrief();
   const q=S.qs[S.i], a=ans();
   const rail=S.qs.map((x,k)=>`<button class="qitem ${k<S.i?"done":""} ${k===S.i?"now":""}" data-jump="${k}">
-      <b>${String(x.n).padStart(2,"0")}</b><span>${esc(x.text)}</span></button>`).join("");
+      <b>${qid(x.n)}</b><span>${esc(x.text)}</span></button>`).join("");
 
   const budget = (S.phase==="reading"&&q.isCase)? q.reading : q.budget;
   const prepared = (q.opener||q.best||q.watch)
@@ -659,12 +927,16 @@ function render(){
     deck=`<button class="btn stop" id="b-done">${esc(t("done"))}</button>
           <button class="btn ghost" id="b-skip">${esc(t("skip"))}</button>`;
   }else{
-    deck=`<button class="btn primary" id="b-next">${esc(S.i>=S.qs.length-1?t("finish"):t("next"))}</button>`;
+    deck=`<button class="btn ${S.fu?.state==="ready"?"":"primary"}" id="b-next">${esc(S.i>=S.qs.length-1?t("finish"):t("next"))}</button>`;
   }
 
   app.innerHTML=`<div class="stage">
     <nav class="rail">${rail}</nav>
     <section class="cardwrap">
+      <div class="ivrow">
+        <div class="iv" data-state="${S.iv}">${IV_SVG}</div>
+        <div class="ivtext"><b>${esc(t("ivName"))}${S.org?" · "+esc(S.org):""}</b><span id="iv-state">${esc(ivLabel())}</span>${aiReady()?`<em>${esc(aiName())}</em>`:""}</div>
+      </div>
       <div class="cue ${S.cueOn&&S.phase==="answering"?"on":""}">${esc(t("lead"))}</div>
       <article class="card">
         <div class="kicker"><span>${esc(t("qof").replace("{a}",q.n).replace("{b}",S.qs.length))}</span>
@@ -679,6 +951,12 @@ function render(){
         ${deck}
       </div>
 
+      ${S.phase==="marking"&&S.fu?`<div class="fu ${S.fu.state}">
+        <span class="lbl">${esc(t("fuTitle"))}</span>
+        ${S.fu.state==="loading"?`<p class="fu-wait"><i></i><i></i><i></i></p>`:""}
+        ${S.fu.state==="ready"?`<p class="fu-q">${esc(S.fu.text)}</p><div class="dl" style="margin-top:12px"><button class="btn primary" id="b-fu">${esc(t("fuAnswer"))}</button><button class="btn ghost" id="b-fu-skip">${esc(t("fuSkip"))}</button></div>`:""}
+        ${S.fu.state==="error"?`<p class="hint">${esc(t("fuFail").replace("{e}",S.fu.msg))}</p>`:""}
+      </div>`:""}
       ${S.phase==="marking"?`<div class="panel">
         <span class="lbl">${esc(t("checks"))}</span>
         <div class="checks" style="margin-top:8px">
@@ -688,7 +966,7 @@ function render(){
         </div>
         <span class="lbl">${esc(t("note"))}</span>
         <textarea id="note" rows="3" placeholder="${esc(t("notePh"))}" style="margin-top:6px">${esc(a.note)}</textarea>
-        ${S.clips[q.n]?`<div class="vid">${esc(t("vidFor"))} · <a href="${S.clips[q.n].url}" download="Q${String(q.n).padStart(2,"0")}.webm" style="color:var(--ok)">${(S.clips[q.n].size/1e6).toFixed(1)} MB</a></div>`:""}
+        ${S.clips[q.n]?`<div class="vid">${esc(t("vidFor"))} · <a href="${S.clips[q.n].url}" download="Q${qid(q.n)}.webm" style="color:var(--ok)">${(S.clips[q.n].size/1e6).toFixed(1)} MB</a></div>`:""}
       </div>`:`<div class="prepbox"><span class="lbl">${esc(t("prepared"))}</span>${prepared}</div>`}
     </section>
 
@@ -706,6 +984,7 @@ function render(){
   if(S.opts.cam&&S.stream){ const v=$("#cam"); if(v) v.srcObject=S.stream; }
   document.querySelectorAll("[data-jump]").forEach(b=>b.addEventListener("click",()=>{
     if(S.phase==="answering") return;
+    try{speechSynthesis.cancel()}catch(e){}
     S.i=+b.dataset.jump; enterQuestion();
   }));
   const on=(id,ev,fn)=>{const e=$("#"+id); if(e) e.addEventListener(ev,fn);};
@@ -714,6 +993,8 @@ function render(){
   on("b-done","click",()=>endAnswer(false));
   on("b-skip","click",()=>endAnswer(true));
   on("b-next","click",nextQuestion);
+  on("b-fu","click",answerFollowUp);
+  on("b-fu-skip","click",()=>{S.fu=null;render();});
   on("tx","input",e=>{ans().transcript=e.target.value;save();});
   on("note","input",e=>{ans().note=e.target.value;save();});
   ["c1","c2","c3"].forEach(c=>on(c,"change",e=>{ans()[c]=e.target.checked;save();}));
@@ -759,8 +1040,8 @@ Score each answer 1-5 and give one better opening line I could say verbatim. Fin
   S.qs.forEach(q=>{
     const a=S.answers[q.n]; if(!a) return;
     total+=a.elapsed||0;
-    rows.push(`### Q${String(q.n).padStart(2,"0")} — ${q.text}`);
-    rows.push(`- ${L?"类型":"type"}: ${q.type||"—"}`);
+    rows.push(`### Q${qid(q.n)} — ${q.text}`);
+    rows.push(`- ${L?"类型":"type"}: ${q.type||"—"}${q.isFollow?` (${L?"AI 面试官现场追问":"asked live by the AI interviewer"})`:""}`);
     rows.push(`- ${L?"用时/预算":"time / budget"}: ${mmss(a.elapsed)} / ${mmss(q.budget)}${a.elapsed>q.budget?` (${t("over")} ${mmss(a.elapsed-q.budget)})`:""}`);
     rows.push(`- ${L?"自评":"self-marks"}: ${t("c1")}=${a.c1?"Y":"N"} · ${t("c2")}=${a.c2?"Y":"N"} · ${t("c3")}=${a.c3?"Y":"N"}${a.skipped?" · SKIPPED":""}`);
     if(q.opener||q.best||q.watch){
@@ -777,8 +1058,10 @@ Score each answer 1-5 and give one better opening line I could say verbatim. Fin
     if(a.note.trim()){ rows.push(`**${t("note")}**: ${a.note.trim()}`); rows.push(""); }
   });
 
+  const coach = S.coach?.state==="ready"
+    ? `\n## ${t("coachHead").replace("{p}",S.coach.by)}\n\n${S.coach.text.trim()}\n` : "";
   return head.join("\n")+`## ${L?"逐题记录":"Question by question"}\n\n`+rows.join("\n")
-    +`\n---\n${t("total")}: ${mmss(total)}\n`;
+    +`\n---\n${t("total")}: ${mmss(total)}\n`+coach;
 }
 
 function renderDebrief(){
@@ -796,7 +1079,7 @@ function renderDebrief(){
       <td class="num">${wc(a.transcript)}</td></tr>`;
   }).join("");
   const clips=Object.entries(S.clips).map(([n,c])=>
-    `<a class="btn" href="${c.url}" download="Q${String(n).padStart(2,"0")}.webm">Q${String(n).padStart(2,"0")} · ${(c.size/1e6).toFixed(1)} MB</a>`).join("");
+    `<a class="btn" href="${c.url}" download="Q${qid(n)}.webm">Q${qid(n)} · ${(c.size/1e6).toFixed(1)} MB</a>`).join("");
 
   app.innerHTML=`
     <h1 class="lede">${esc(t("debrief"))}${S.org?" — "+esc(S.org):""}</h1>
@@ -810,8 +1093,14 @@ function renderDebrief(){
       <button class="btn primary" id="dl-md">${esc(t("exportMd"))}</button>
       <button class="btn" id="again">${esc(t("again"))}</button>
     </div>
+    ${aiReady()&&S.ai.coach?`<section class="coach">
+      ${!S.coach?`<button class="btn" id="coach-go">${esc(t("coachAsk").replace("{p}",aiName()))}</button>`:""}
+      ${S.coach?.state==="loading"?`<p class="hint">${esc(t("coachWait").replace("{p}",aiName()))}</p>`:""}
+      ${S.coach?.state==="error"?`<p class="err">${esc(t("coachFail").replace("{e}",S.coach.msg))}</p><button class="btn" id="coach-go">${esc(t("coachAsk").replace("{p}",aiName()))}</button>`:""}
+      ${S.coach?.state==="ready"?`<span class="lbl">${esc(t("coachHead").replace("{p}",S.coach.by))}</span><div class="coachtext">${mdLite(S.coach.text)}</div>`:""}
+    </section>`:""}
     ${clips?`<div class="field" style="margin-top:26px"><span class="lbl">${esc(t("exportAll"))}</span><div class="dl">${clips}</div></div>`:""}
-    <div class="notice">${esc(t("privacy"))}</div>`;
+    <div class="notice">${esc(aiReady()?t("aiSends").replace("{p}",aiName()):t("privacy"))}</div>`;
 
   $("#dl-md").addEventListener("click",()=>{
     const blob=new Blob([buildMarkdown()],{type:"text/markdown"});
@@ -820,7 +1109,8 @@ function renderDebrief(){
     a.download=`debrief-${(S.org||"session").replace(/[^\w\u4e00-\u9fa5-]+/g,"-").toLowerCase()}-${new Date().toISOString().slice(0,10)}.md`;
     a.click();
   });
-  $("#again").addEventListener("click",()=>{ S.phase="setup"; S.answers={}; S.clips={}; render(); });
+  $("#again").addEventListener("click",()=>{ S.phase="setup"; S.answers={}; S.clips={}; S.coach=null; render(); });
+  const cg=$("#coach-go"); if(cg) cg.addEventListener("click",askCoach);
 }
 
 /* ============================ boot ============================ */
@@ -828,7 +1118,7 @@ function setLang(l){
   LANG=l; document.documentElement.lang=l==="zh"?"zh":"en";
   $("#lang-en").setAttribute("aria-pressed",String(l==="en"));
   $("#lang-zh").setAttribute("aria-pressed",String(l==="zh"));
-  $("#mh-priv").textContent=t("priv");
+  $("#mh-priv").textContent=privLine();
   render();
 }
 $("#lang-en").addEventListener("click",()=>setLang("en"));
@@ -842,6 +1132,7 @@ document.addEventListener("keydown",e=>{
     else if(S.phase==="marking") nextQuestion(); }
 });
 loadDraft();
+aiLoad();
 if(!S.bankMd) S.bankMd=SCRIPTS.panel.md.trim();
 setLang(LANG);
 </script>
