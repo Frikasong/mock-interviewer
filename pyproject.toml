@@ -1,7 +1,7 @@
 [project]
 name = "mock-interviewer-mcp"
-version = "1.1.0"
-description = "Interview prep in three steps, served over MCP to any AI client: research the employer, research yourself, practise and fold the debrief back in."
+version = "1.2.0"
+description = "Interview prep in three steps for any AI: a practice room, a skill installer, a paste-in prompt and an MCP server, in one command."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -11,6 +11,7 @@ dependencies = ["mcp>=1.9"]
 Homepage = "https://github.com/Frikasong/mock-interviewer"
 
 [project.scripts]
+mock-interviewer = "mock_interviewer_mcp.cli:main"
 mock-interviewer-mcp = "mock_interviewer_mcp.server:main"
 
 [build-system]
@@ -22,3 +23,5 @@ packages = ["mock_interviewer_mcp"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "skills" = "mock_interviewer_mcp/skills"
+"interviewer/index.html" = "mock_interviewer_mcp/interviewer/index.html"
+"portable" = "mock_interviewer_mcp/portable"

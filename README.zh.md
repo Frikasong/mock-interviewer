@@ -37,6 +37,31 @@
 
 ---
 
+## 最快上手：一条命令
+
+先装一次 [uv](https://docs.astral.sh/uv/)（macOS 用 `brew install uv`；macOS 和 Linux 也可以用 `curl -LsSf https://astral.sh/uv/install.sh | sh`；Windows 用 `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"`）。然后：
+
+```bash
+uv tool install git+https://github.com/Frikasong/mock-interviewer
+mock-interviewer --zh
+```
+
+第二行会在浏览器里打开练习室。它运行在你自己的电脑上（`http://localhost:5757`），按 Ctrl+C 停止。不想安装、只想试一下：`uvx --from git+https://github.com/Frikasong/mock-interviewer mock-interviewer --zh`。
+
+其他功能也都用这一个命令：
+
+| 命令 | 做什么 |
+|---|---|
+| `mock-interviewer` | 打开练习室 |
+| `mock-interviewer skill --zh` | 把 skill 装进这台电脑上找到的所有 AI 智能体（也可以点名：`skill --zh codex gemini`） |
+| `mock-interviewer prompt --zh` | 保存单文件版，粘贴给任何聊天 AI |
+| `mock-interviewer folder "XX 律所" "Articling" --zh` | 用模板建好这次申请的工作文件夹 |
+| `mock-interviewer check question-bank.md` | 练之前检查题库 |
+| `mock-interviewer debrief 复盘.md` | 从复盘里读出用时、预算和自评 |
+| `mock-interviewer mcp` | 运行 MCP 服务器 |
+
+`mock-interviewer --help` 能看到全部选项。以后更新：`uv tool upgrade mock-interviewer-mcp`。
+
 ## 接入任何 AI
 
 方法本身是纯 markdown，所以你现在用哪个 AI 都可以。按你的情况选一行：
