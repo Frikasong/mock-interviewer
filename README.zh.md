@@ -8,7 +8,7 @@
 
 两个东西，配合用最好，分开用也行。
 
-1. **一个 Claude skill**——建面试准备真正需要的两份资料：站得住的雇主档案和 Why Them 论证，以及支撑 Why Me 的 STAR 故事银行。
+1. **一套任何 AI 都能照着做的方法**——可以是 Agent Skill、MCP 服务器，或者一个粘贴进任何聊天框就能用的单文件。它建面试准备真正需要的两份资料：站得住的雇主档案和 Why Them 论证，以及支撑 Why Me 的 STAR 故事银行。
 2. **模拟面试器**（`interviewer/index.html`）——一个 HTML 文件，用 Chrome 打开就能对着真实计时练习，带录像和转录，导出的复盘可以直接交给 AI 批改。
 
 ---
@@ -27,7 +27,7 @@
 | 二、认识自己 | 我是谁、我的证据在哪 | STAR 故事卡 S01…Sn、卖点矩阵、自我介绍、弱项 |
 | 三、模拟面试 | 把资料变成临场表现 | 缺口清单、逐题复盘 |
 
-前两步是 skill 做的。第三步分两半：工具负责计时、录像和转录，导出的复盘再交回 skill 批改，并回填进题库和故事卡。
+前两步由你的 AI 照着这套方法做。第三步分两半：工具负责计时、录像和转录，导出的复盘再交回 AI 批改，并回填进题库和故事卡。
 
 有了前两步的资料，AI 才说得出这种话：
 
@@ -37,17 +37,33 @@
 
 ---
 
-## 安装 skill
+## 接入任何 AI
+
+方法本身是纯 markdown，所以你现在用哪个 AI 都可以。按你的情况选一行：
+
+| 你用的 AI | 用哪个 | 安装 |
+|---|---|---|
+| 网页或 App 里聊天：ChatGPT、Gemini、Claude.ai、Copilot、DeepSeek、Kimi、通义千问、豆包…… | **单文件** | 不用装，直接粘贴 |
+| 能读 Agent Skills 的智能体：Claude Code、Codex、Gemini CLI、GitHub Copilot、Cursor、OpenCode、Goose、Amp、Windsurf | **skill** | 一条命令 |
+| 能连 MCP 服务器的客户端：Claude Desktop、Cursor、Codex、Gemini CLI、VS Code、Goose…… | **MCP 服务器** | 几行配置 |
+
+### 单文件（任何聊天 AI）
+
+下载 [`portable/interview-prep-zh.md`](portable/interview-prep-zh.md)（英文版：[`portable/interview-prep.md`](portable/interview-prep.md)），整份作为第一条消息粘贴进去，或者存成自定义 GPT、Gem、项目的指令。然后直接说你的情况。完整方法和所有模板都在这一个文件里。
+
+### Skill（能读 SKILL.md 的智能体）
 
 ```bash
 git clone https://github.com/Frikasong/mock-interviewer.git
 cd mock-interviewer
-./install.sh
+./install.sh                    # 中文版，装进这台电脑上找到的所有支持的智能体
+./install.sh zh codex gemini    # 或者只装你点名的几个
+./install.sh --list             # 支持哪些智能体、各自读哪个文件夹
 ```
 
-装的是中文版。要英文版：`./install.sh en`。**两个只装一个**，会互相抢触发。
+要英文版就加 `en`。**每个智能体只装一个语言版本**，两个会互相抢触发。列表里没有的工具：`./install.sh zh --dir <它的 skills 文件夹>`。仓库用的是标准的 `skills/<名字>/SKILL.md` 结构，所以从 GitHub 仓库安装 skill 的管理工具应该也能直接识别。
 
-装完重启 Claude Code，然后**不要**点名这个 skill——直接说你的情况：
+装完重启，然后**不要**点名这个 skill——直接说你的情况：
 
 ```
 我下周四面 XX 公司的 XX 岗，这是 job posting
@@ -56,15 +72,52 @@ cd mock-interviewer
 
 它会自己认出来该干什么。
 
-**用 Claude.ai 网页版的**：去 [Releases](../../releases) 下载 `interview-prep-zh.skill`，在 设置 → Capabilities → Skills 里上传。
+**Claude.ai 网页版**也可以去 [Releases](../../releases) 下载 `interview-prep-zh.skill`，在 设置 → Capabilities → Skills 里上传。
 
-**不想装的**：`skills/interview-prep-zh/SKILL.md` 整份粘进对话也能用，只是每次都要粘一遍。
+### MCP 服务器
+
+需要先装 [uv](https://docs.astral.sh/uv/)。把下面这段加进你的客户端的 MCP 配置，大多数客户端是这个格式：
+
+```json
+{
+  "mcpServers": {
+    "mock-interviewer": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/Frikasong/mock-interviewer", "mock-interviewer-mcp"]
+    }
+  }
+}
+```
+
+Codex（`~/.codex/config.toml`）：
+
+```toml
+[mcp_servers.mock-interviewer]
+command = "uvx"
+args = ["--from", "git+https://github.com/Frikasong/mock-interviewer", "mock-interviewer-mcp"]
+```
+
+Claude Code：`claude mcp add mock-interviewer -- uvx --from git+https://github.com/Frikasong/mock-interviewer mock-interviewer-mcp`
+
+服务器在你自己电脑上运行，不调用任何模型，也不联网。提供五个工具：
+
+| 工具 | 做什么 |
+|---|---|
+| `interview_prep_guide` | 方法本身：总览，或第一、二、三步，中英文都有。AI 会先调用它。 |
+| `get_template` | 任一产出文件的空白模板。 |
+| `check_question_bank` | 用模拟面试器自己的解析规则检查题库：能导入几道题、哪些时间预算读不懂、哪些字段会被忽略、有没有重复题、哪些题还没准备素材。 |
+| `read_debrief` | 从导出的复盘里读出每题用时、预算和自评，列出最该重练的题，让 AI 按准确的数字批改。 |
+| `create_prep_folder` | 为一次申请建好工作文件夹，放好空白模板。不会覆盖已有文件。 |
+
+支持 MCP 提示词的客户端还能看到 `interview_prep` 和 `mark_debrief` 两个快捷入口。
 
 ## 运行模拟面试器
 
 下载 [`interviewer/index.html`](interviewer/index.html)，用 Chrome 打开。
 
 安装步骤到此结束。不用装 Node，不用起服务器，不用 API key，不用注册。
+
+页面里有一位插画面试官，读题时它在说话，你作答时它在听。默认它只是一张画，什么都不离开你的电脑。想让它真的"动脑"，在设置页打开 **AI 面试官（可选）**，接入任何兼容 OpenAI 接口的服务：OpenAI、Claude、Gemini、DeepSeek、Kimi、通义千问、豆包、OpenRouter、用 Ollama 跑的本机模型，或者你自己的地址。接入后它会在你每答完一题时追问一句，像真实的面试官那样，结束后还能一键批改复盘。key 默认只留在当前页面，勾选"记住"才会保存；接入期间页面会写明你的回答发给了谁，录像和音频永远不发送。
 
 ---
 
@@ -76,7 +129,7 @@ cd mock-interviewer
 
 然后建公司档案（重点是最近 12 个月发生了什么），写 Why Them 三层论证，最后建题库。
 
-Why Them 有一条自检：**把公司名遮掉，这段话如果原封不动能投给它的竞争对手，就是没准备好。** skill 写完会自己跑这个测试。
+Why Them 有一条自检：**把公司名遮掉，这段话如果原封不动能投给它的竞争对手，就是没准备好。** AI 写完会自己跑这个测试。
 
 **第二步·认识自己**
 
@@ -96,11 +149,11 @@ Why Them 有一条自检：**把公司名遮掉，这段话如果原封不动能
 
 ## 三个设计判断
 
-**skill 不替你编经历。** 它提问、结构化、润色，事实必须来自你。编出来的故事撑不过一次追问，而且比没故事更糟。
+**这套方法不替你编经历。** 它提问、结构化、润色，事实必须来自你。编出来的故事撑不过一次追问，而且比没故事更糟。
 
-**工具里不含 AI。** 不要 key、不花钱、你的录像不经过任何人的推理服务。复盘是一个 markdown 文件，交给你自己那个 AI。
+**工具里的 AI 是可选的，而且是你自己的。** 默认什么都不调用：不要 key、不花钱，你的录像不经过任何人的推理服务，复盘是一个 markdown 文件，交给你自己那个 AI。接入之后多了现场追问和批改，用的是你自己的 key、你自己选的服务商——不经过我们的服务器，因为根本没有。
 
-**什么都不上传。** 录像、音频、转录只存在浏览器标签页里，关掉就没了，除非你先下载。对一堆你自己没打磨过的面试回答来说，这是唯一正确的默认值。
+**录像永远不上传。** 录像和音频只存在浏览器标签页里，关掉就没了，除非你先下载。对一堆你自己没打磨过的面试回答来说，这是唯一正确的默认值。
 
 ---
 

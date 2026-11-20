@@ -47,8 +47,8 @@ git push origin v1.0.0
 
 About 那个齿轮里：
 
-- **Description**：`面试准备三步法：一个 Claude skill（中英）+ 一个本地模拟面试工具 / Interview prep in three steps`
-- **Topics**：`claude-skill` `claude-code` `interview-preparation` `job-search` `ai-tools` `career` `star-method`
+- **Description**：`面试准备三步法：任何 AI 都能用的方法（skill / MCP / 单文件，中英）+ 一个本地模拟面试工具 / Interview prep in three steps`
+- **Topics**：`agent-skills` `mcp-server` `claude-skill` `interview-preparation` `job-search` `ai-tools` `career` `star-method`
 - 关掉 Packages、Environments，页面干净些
 
 Topics 是 GitHub 站内唯一的自然流量来源，别跳过。
@@ -74,7 +74,9 @@ Topics 是 GitHub 站内唯一的自然流量来源，别跳过。
 ## 五、发布前检查
 
 - [ ] `build.py --repo ...` 跑过，全仓库搜不到 `<user>`
-- [ ] `./install.sh` 真的跑通了，确认 `~/.claude/skills` 路径对
+- [ ] `./install.sh --list` 的路径和各智能体当前文档一致；至少在一个非 Claude 的智能体上装一次试触发
+- [ ] MCP：`uvx --from git+https://github.com/Frikasong/mock-interviewer mock-interviewer-mcp --version` 能跑；在一个客户端里调一次 `interview_prep_guide`
+- [ ] `python3 build.py` 之后 `portable/` 没有未提交的改动（单文件版和 skill 同步）
 - [ ] LICENSE 里是你的名字
 - [ ] 两个 `.skill` 装上后能被口语化的请求触发（不要用「帮我用这个 skill」测，那是作弊）
 - [ ] `index.html` 在 Chrome 里跑通一整场，复盘导得出来
@@ -87,7 +89,7 @@ Topics 是 GitHub 站内唯一的自然流量来源，别跳过。
 
 原稿最后一句是「skill 和工具放评论区了」。走 GitHub 要改成更具体的落点，否则观众不知道去哪：
 
-> 完整方法我写成了一个 Claude skill，模拟面试工具也开源了，GitHub 搜 mock-interviewer，评论区我也放链接。
+> 完整方法我写成了任何 AI 都能用的 skill / MCP / 单文件，模拟面试工具也开源了，GitHub 搜 mock-interviewer，评论区我也放链接。
 
 两点判断：
 

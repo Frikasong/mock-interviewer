@@ -1,59 +1,98 @@
 #!/usr/bin/env bash
-# 安装 interview-prep skill 到 Claude Code / Claude Desktop
+# Install the interview-prep skill into any AI agent that reads Agent Skills (SKILL.md).
+# 把 interview-prep skill 装进任何支持 Agent Skills（SKILL.md）的 AI 工具。
 #
-#   ./install.sh          安装中文版
-#   ./install.sh en       安装英文版
+#   ./install.sh                      Chinese edition, into every agent found on this computer
+#   ./install.sh en                   English edition
+#   ./install.sh en codex gemini      only into the agents you name
+#   ./install.sh --list               show supported agents and where each one reads skills
 #
-# 装完重启 Claude Code，然后直接说你的情况就行，例如：
-#   「我下周四面 XX 公司的 XX 岗，这是 job posting」
+# Agents: claude codex gemini copilot cursor opencode goose amp windsurf
+# Any other tool: ./install.sh en --dir /path/to/its/skills
 set -euo pipefail
 cd "$(dirname "$0")"
 
-LANG_CHOICE="${1:-zh}"
-case "$LANG_CHOICE" in
-  zh|中文) SRC="skills/interview-prep-zh"; NAME="interview-prep-zh" ;;
-  en|english) SRC="skills/interview-prep"; NAME="interview-prep" ;;
-  *) echo "用法: ./install.sh [zh|en]"; exit 1 ;;
-esac
+# agent | folder it reads skills from | folder whose existence means it is installed
+AGENTS=(
+  "claude|$HOME/.claude/skills|$HOME/.claude"
+  "codex|$HOME/.codex/skills|$HOME/.codex"
+  "gemini|$HOME/.gemini/skills|$HOME/.gemini"
+  "copilot|$HOME/.copilot/skills|$HOME/.copilot"
+  "cursor|$HOME/.cursor/skills|$HOME/.cursor"
+  "opencode|$HOME/.config/opencode/skills|$HOME/.config/opencode"
+  "goose|$HOME/.config/goose/skills|$HOME/.config/goose"
+  "amp|$HOME/.config/agents/skills|$HOME/.config/agents"
+  "windsurf|$HOME/.codeium/windsurf/skills|$HOME/.codeium/windsurf"
+)
 
-# Claude Code 读 ~/.claude/skills，Claude Desktop 在 macOS 上也是这里
-DEST="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+LANG_CHOICE="zh"; WANT=(); CUSTOM=""; FORCE=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    zh|中文) LANG_CHOICE="zh" ;;
+    en|english) LANG_CHOICE="en" ;;
+    --dir) CUSTOM="${2:?--dir needs a path}"; shift ;;
+    -y|--yes) FORCE=1 ;;
+    --list)
+      printf "%-10s %s\n" agent "skills folder"
+      for a in "${AGENTS[@]}"; do IFS='|' read -r n d _ <<<"$a"; printf "%-10s %s\n" "$n" "$d"; done
+      exit 0 ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
+    *) WANT+=("$1") ;;
+  esac
+  shift
+done
 
-if [ ! -d "$SRC" ]; then
-  echo "找不到 $SRC —— 请在仓库根目录运行这个脚本。"; exit 1
+if [ "$LANG_CHOICE" = "en" ]; then SRC="skills/interview-prep"; NAME="interview-prep"; OTHER="interview-prep-zh"
+else SRC="skills/interview-prep-zh"; NAME="interview-prep-zh"; OTHER="interview-prep"; fi
+[ -f "$SRC/SKILL.md" ] || { echo "Cannot find $SRC — run this from the repository root."; exit 1; }
+
+TARGETS=()
+if [ -n "$CUSTOM" ]; then
+  TARGETS+=("custom|$CUSTOM")
+elif [ ${#WANT[@]} -gt 0 ]; then
+  for w in "${WANT[@]}"; do
+    hit=""
+    for a in "${AGENTS[@]}"; do IFS='|' read -r n d _ <<<"$a"; [ "$n" = "$w" ] && hit="$n|$d"; done
+    [ -n "$hit" ] || { echo "Unknown agent: $w (see ./install.sh --list)"; exit 1; }
+    TARGETS+=("$hit")
+  done
+else
+  for a in "${AGENTS[@]}"; do IFS='|' read -r n d home <<<"$a"; [ -d "$home" ] && TARGETS+=("$n|$d"); done
+  if [ ${#TARGETS[@]} -eq 0 ]; then
+    echo "No supported AI agent found in your home folder."
+    echo "Name one (./install.sh $LANG_CHOICE codex), or give its skills folder (./install.sh $LANG_CHOICE --dir PATH)."
+    echo "Using a chat website instead? Paste portable/$NAME.md into the chat — no install needed."
+    exit 1
+  fi
 fi
 
-mkdir -p "$DEST"
+ask() { [ "$FORCE" = 1 ] && return 0; read -r -p "$1 [y/N] " a; [[ "$a" =~ ^[Yy]$ ]]; }
 
-# 两个语言版本会抢同一批触发词，装一个就够了
-OTHER="interview-prep"; [ "$NAME" = "interview-prep" ] && OTHER="interview-prep-zh"
-if [ -d "$DEST/$OTHER" ]; then
-  echo "检测到已安装 $OTHER。"
-  echo "两个语言版本会互相抢触发，建议只留一个。"
-  read -r -p "删掉 $OTHER 吗？[y/N] " a
-  [[ "$a" =~ ^[Yy]$ ]] && rm -rf "${DEST:?}/$OTHER" && echo "  已删除 $OTHER"
-fi
+DONE=()
+for t in "${TARGETS[@]}"; do
+  IFS='|' read -r agent dest <<<"$t"
+  mkdir -p "$dest"
+  # The two editions answer the same requests; keep one per agent.
+  if [ -d "$dest/$OTHER" ] && ask "[$agent] $OTHER is installed too and will compete with $NAME. Remove it?"; then
+    rm -rf "${dest:?}/$OTHER"
+  fi
+  if [ -d "$dest/$NAME" ]; then
+    ask "[$agent] $NAME is already installed. Replace it?" || { echo "[$agent] skipped"; continue; }
+    rm -rf "${dest:?}/$NAME"
+  fi
+  cp -R "$SRC" "$dest/$NAME"
+  DONE+=("$agent → $dest/$NAME")
+done
 
-if [ -d "$DEST/$NAME" ]; then
-  read -r -p "$NAME 已存在，覆盖？[y/N] " a
-  [[ "$a" =~ ^[Yy]$ ]] || { echo "取消。"; exit 0; }
-  rm -rf "${DEST:?}/$NAME"
-fi
-
-cp -R "$SRC" "$DEST/$NAME"
-
+echo
+if [ ${#DONE[@]} -eq 0 ]; then echo "Nothing installed."; exit 0; fi
+echo "Installed $NAME:"
+for d in "${DONE[@]}"; do echo "  $d"; done
 cat <<EOF
 
-装好了：$DEST/$NAME
+Next: restart the agent, then just describe your situation — no need to name the skill:
+  "I'm interviewing at <employer> for <role> next Thursday, here's the posting."
+  「我下周四面 XX 公司的 XX 岗，这是 job posting」
 
-下一步
-  1. 重启 Claude Code
-  2. 直接说你的情况，不用点名这个 skill：
-       我下周四面 XX 公司的 XX 岗，这是 job posting
-       （把招聘启事粘上）
-  3. 它会自己认出来该干什么
-
-模拟面试器是另一个东西，不用安装：
-  用 Chrome 打开 interviewer/index.html 就能跑。
-
+The practice tool needs no install: open interviewer/index.html in Chrome.
 EOF
