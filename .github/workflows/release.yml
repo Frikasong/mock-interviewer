@@ -28,11 +28,15 @@ jobs:
           files: |
             dist/interview-prep.skill
             dist/interview-prep-zh.skill
+            portable/interview-prep.md
+            portable/interview-prep-zh.md
             interviewer/index.html
           generate_release_notes: true
           body: |
             ## 下载哪个
 
-            - **interview-prep.skill** / **interview-prep-zh.skill** — Claude Code、Claude Desktop、Claude.ai。只装一个语言版本。
+            - **interview-prep.md** / **interview-prep-zh.md** — 通用单文件版：整份粘贴给任何 AI（ChatGPT、Gemini、Claude、DeepSeek、Kimi……）就能用。
+            - **interview-prep.skill** / **interview-prep-zh.skill** — Claude.ai 上传用。其他能读 SKILL.md 的智能体（Codex、Gemini CLI、Copilot、Cursor……）用仓库里的 `./install.sh`。只装一个语言版本。
+            - **MCP 服务器** — 不用下载，按 README 把 `uvx --from git+https://github.com/Frikasong/mock-interviewer mock-interviewer-mcp` 加进客户端配置。
             - **index.html** — Mock Interviewer。下载后用 Chrome 打开，没有安装步骤。
             安装和用法见 README。
