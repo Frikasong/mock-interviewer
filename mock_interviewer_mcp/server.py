@@ -133,7 +133,7 @@ INSTRUCTIONS = """Interview preparation in three steps: research the employer, r
 
 Whenever the user mentions an upcoming interview, pastes a job posting, asks for STAR stories, wants to practise, or brings back a mock-interview debrief, call interview_prep_guide with step="overview" first and follow it. Fetch the step files as the overview tells you to. Never invent the user's experience: ask, structure and sharpen."""
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 try:
     mcp = _Server("mock-interviewer", instructions=INSTRUCTIONS, version=VERSION)
 except TypeError:  # SDK 1.x has no version argument
